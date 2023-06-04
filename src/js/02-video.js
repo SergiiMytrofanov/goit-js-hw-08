@@ -2,48 +2,33 @@
 import Vimeo from '@vimeo/player';
 import throttle from 'lodash.throttle';
 
-const playerEl = document.querySelector("#vimeo-player")
-const player = new Vimeo.Player(playerEl);
+const playerEl = document.querySelector("#vimeo-player");
+const player = new Vimeo(playerEl);
 
-const updateCurrentTime = throttle(function(time) {
-    localStorage.setItem('videoplayer-current-time', time);
-  }, 1000);
+let watchedTime = 0;
 
-  player.on('timeupdate', function(event) {
-    const currentTime = event.seconds;
-    updateCurrentTime(currentTime);
-  });
+const watchedTimeReload = throttle(function (event) {
+  watchedTime = event.seconds;
+  localStorage.setItem('videoplayer-current-time', JSON.stringify(watchedTime));
+}, 1000);
 
-  
-  const savedTime = localStorage.getItem('videoplayer-current-time');
+player.on('timeupdate', watchedTimeReload);
 
+const savedTime = localStorage.getItem('videoplayer-current-time');
 if (savedTime) {
-
-  player.setCurrentTime(savedTime).then(function() {
-  
-    player.play();
-  }).catch(function(error) {
-    console.error('Помилка при встановленні часу відтворення:', error.message);
-  });
+  const parsedTime = JSON.parse(savedTime);
+  watchedTime = parsedTime;
 }
 
-console.dir(savedTime)
+player.setCurrentTime(watchedTime)
+  .then(function (seconds) {
+  })
+  .catch(function (error) {
+    switch (error.name) {
+      case 'RangeError':
+       break;
 
-
-// if (currentTime) {
-//     player.setCurrentTime(parseFloat(currentTime)).catch(function(error) {
-//       switch (error.name) {
-//         case 'RangeError':
-//           break;
-//         default:
-//          break;
-//       }
-//     });
-//   }
-  
-//  const saveCurrentTime = throttle(function(data) {
-//     const currentTime = data.seconds;
-//     localStorage.setItem('videoplayer-current-time', currentTime);
-//   }, 1000);
-  
-//    player.on('timeupdate', saveCurrentTime);
+      default:
+      break;
+    }
+  });
