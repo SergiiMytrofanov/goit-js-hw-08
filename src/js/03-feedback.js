@@ -38,6 +38,13 @@ const clearForm = () => {
 
 feedbackForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
+
+    const valuesAfterClear = {
+        email: mailInput.value,
+        message: textArea.value
+    };
+        console.log(valuesAfterClear);
+
     clearForm();
 });
 
