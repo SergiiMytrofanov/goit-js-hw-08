@@ -39,11 +39,11 @@ const clearForm = () => {
 feedbackForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
 
-    const valuesAfterClear = {
+    const dataAfterClear = {
         email: mailInput.value,
         message: textArea.value
     };
-        console.log(valuesAfterClear);
+        console.log(dataAfterClear);
 
     clearForm();
 });
